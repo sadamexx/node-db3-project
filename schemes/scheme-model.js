@@ -2,12 +2,12 @@ const db = require('../data/db-config.js');
 
 module.exports = {
     add,
-    addStep,
     find,
     findById,
     findSteps,
     remove,
-    update
+    update,
+    addStep
 };
 
 //adds new scheme to database
@@ -33,7 +33,8 @@ function findSteps(id){
     return db('steps')
     .join('schemes', "schemes.id", "steps.scheme_id")
     .select("steps.step_number", "steps.instructions", "schemes.scheme_name")
-    .where("scheme_id", id );
+    .where("scheme_id", id )
+    .orderBy("step_number", "asc");
 };
 
 //deletes a scheme by id
@@ -51,14 +52,7 @@ function update(changes, id){
 };
 
 //adds step to a scheme(id)
-function addStep(step, scheme_id){
-    // const {instructions, step_number} = step
-    return 
-    db('steps')
-    .join('schemes', "schemes.id", "steps.scheme_id")
-    .insert(step, scheme_id, "id")
-    // .then(id => {
-    //     return db('steps')
-    //     .where({ id : id[0] })
-    // })
-}
+function addStep(step, id){   
+    return db('steps')    
+    .insert({...step, scheme_id : id});
+};
